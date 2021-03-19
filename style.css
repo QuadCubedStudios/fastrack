@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #202b38;
+    color: white;
+
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+header {
+    margin: 1rem;
+}
+
+section {
+    height: 800px;
+}
