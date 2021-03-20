@@ -1,19 +1,39 @@
 'use strict';
 
-import { Canvas, Vector } from "./util/canvas.js";
+import { Canvas } from "./util/canvas.js";
 
 import { Plugin } from "./editor/plugin.js";
-import { MouseHover } from "./editor/mouseHover.js";
+import { MouseControl } from "./editor/mouseControl.js";
+import { Vec } from "./util/vector.js";
 
-export const TILE_SIZE = Vector(64, 64);
+export const TILE_SIZE = Vec(64, 64);
 
 export class Editor {
-    constructor(/** @type {HTMLCanvasElement} */ element) {
-        this.canvas = new Canvas(element);
+    constructor(/** @type {HTMLElement} */ element) {
+        let canvas = document.createElement("canvas");
+
+        element.appendChild(canvas);
+
+        this.canvas = new Canvas(canvas);
+        this.program = {
+            tiles: [
+                {
+                    position: Vec(0, 0),
+                    tile: "rail",
+                    rotation: 0,
+                }
+            ]
+        };
         this.pendingDraw = null;
         this.plugins = [
-            new MouseHover(this)
+            new MouseControl(this)
         ];
+
+        let styles = window.getComputedStyle(element);
+        this.theme = {
+            gridColor: styles.getPropertyValue("--fastrack-grid-color"),
+            highlightColor: styles.getPropertyValue("--fastrack-highlight-color"),
+        };        
 
         this.resize();
     }
@@ -35,11 +55,11 @@ export class Editor {
 
             // Draw the base grid
             for (let x = 0; x < this.canvas.dimensions.x; x += TILE_SIZE.x) {
-                this.canvas.line(Vector(x, 0), Vector(x, this.canvas.dimensions.y), "rgba(255, 255, 255, 0.4)", 2);
+                this.canvas.line(Vec(x, 0), Vec(x, this.canvas.dimensions.y), this.theme.gridColor, 2);
             }
-    
+
             for (let y = 0; y < this.canvas.dimensions.y; y += TILE_SIZE.y) {
-                this.canvas.line(Vector(0, y), Vector(this.canvas.dimensions.x, y), "rgba(255, 255, 255, 0.4)", 2);
+                this.canvas.line(Vec(0, y), Vec(this.canvas.dimensions.x, y), this.theme.gridColor, 2);
             }
 
             for (const plugin of this.plugins) {

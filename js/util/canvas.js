@@ -1,15 +1,6 @@
 'use strict';
 
-
-/**
- * A 2D Vector
- * @typedef {Object} Vector
- * @property {number} x
- * @property {number} y
- */
-export function Vector(/** @type {number} */ x, /** @type {number} */ y) {
-    return { x, y };
-}
+import { Vec, Vector } from "./vector.js";
 
 /**
  * @typedef {string | CanvasGradient | CanvasPattern} StrokeStyle
@@ -26,7 +17,7 @@ export class Canvas {
     }
 
     get dimensions() {
-        return Vector(this.canvas.width, this.canvas.height);
+        return Vec(this.canvas.width, this.canvas.height);
     }
 
     set dimensions(/** @type {Vector} */ dim) {
@@ -36,7 +27,7 @@ export class Canvas {
 
     resize() {
         let parent = this.canvas.parentElement.getBoundingClientRect();
-        this.dimensions = Vector(parent.width, parent.height);
+        this.dimensions = Vec(parent.width, parent.height);
     }
 
     clear() {
