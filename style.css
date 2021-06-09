@@ -13,14 +13,34 @@ body {
 
     font-family: monospace;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
     max-width: 100%;
-}
-
-header {
-    margin: 1rem;
 }
 
 section {
     height: 800px;
+}
+
+textarea {
+    background-color: transparent;
+    border: 2px solid #3a608d;
+    border-radius: 8px;
+    width: 100%;
+    resize: vertical;
+
+    color: white;
+    line-height: 1.0;
+
+    margin-bottom: 1rem;
+}
+
+button {
+    background-color: rgb(0, 150, 20);
+    border: none;
+    border-radius: 8px;;
+    width: 6rem;
+    padding: 0.5rem;
+    color: white;
+
+    cursor: pointer;
 }

@@ -12,7 +12,13 @@
         <h1>FasTrack</h1>
         <p>A Turing Complete Train language</p>
     </header>
-    <section id="editor"></section>
-    <script type="module" src="js/index.js"></script>
+    <textarea id="source" rows="20">// Enter code here</textarea>
+    <!-- Temporary handler -->
+    <button onclick="interp.parse(document.querySelector('textarea').value)">Call Parser</button>
+    <script src="js/interp.js"></script>
+
+    <!-- For later -->
+    <!-- <section id="editor"></section> -->
+    <!-- <script type="module" src="js/index.js"></script> -->
 </body>
 </html>
