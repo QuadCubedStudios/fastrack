@@ -72,5 +72,6 @@ export class Editor {
     }
 }
 
+
 let editor = new Editor(document.querySelector("#editor"));
 window.addEventListener("resize", () => editor.resize());
