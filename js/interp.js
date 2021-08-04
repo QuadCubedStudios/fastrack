@@ -74,12 +74,44 @@ class Interpreter {
         or possibly, as an object.
     */
     step() {
-        console.log(this.grid);
-        
-        for (let i = 0; i < this.grid.length; i++) { // rows
-            for (let j = 0; j < this.grid[0].length; j++) { // columns
+        // remove train from old position
+        // let dGrid = this.grid
+        // let tStr = this.grid[[this.tRow,this.tCol]][1]
+        // dGrid[[this.tRow,this.tCol]][1] = tStr[0] + '#' + tStr[2]
 
-            }
+
+        this.tRow += this.dRow
+        this.tCol += this.dCol
+
+        let cell = this.grid[[this.tRow,this.tCol]] 
+        //find new delta
+        let tdR = this.dRow
+        let tdC = this.dCol
+        switch(cell[1][1]){
+        case '/':
+            this.dRow = tdC
+            this.dCol = tdR
+            this.grid[[this.tRow,this.tCol]][1].replace('/','\\')
+            break;
+        case '\\':
+            this.dRow = -tdC
+            this.dCol = -tdR
+            this.grid[[this.tRow,this.tCol]][1].replace('\\','/')
+            break;
+        case '^':
+
+
+        }
+
+        // add train in new position
+        // let ntStr = dGrid[[this.tRow,this.tCol]][1]
+        // dGrid[[this.tRow,this.tCol]][1] = tStr[0] + 'T' + tStr[2]
+
+        // for (let i = 0; i < this.grid.length; i++) { // rows
+        //     for (let j = 0; j < this.grid[0].length; j++) { // columns
+
+        //     }
+        console.log(this.grid);
         }
     }
 }
