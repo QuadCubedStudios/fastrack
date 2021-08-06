@@ -3,60 +3,62 @@
 
 class Interpreter {
     constructor(code, input) {
-        this.code = [];
-        this.grid = {};
-        this.input = input; // must be an array of bits
- 
+        this.code = []
+        this.grid = []
+        this.input = input // must be an array of bits
     }
 
     parse(value) {
         this.code = value.split`
-`;
+`
 
-        // first two lines are input and output, in that order.
+        // first three lines are train data, input and output, in that order.
+        // train data is [x,y,dx,dy]
         // input and output points are given as x,y pairs. They must be lazy points.
         // may add a flag later to accomodate string input converted to a byte stream.
-        // try {
-        //     // the map converts to row, col pairs
-        //     this.inputPts = JSON.parse(code[0]).map(x=>x.reverse());
-        //     this.outputPts = JSON.parse(code[1]).map(x=>x.reverse());
-        // } catch (e) {
-        //     console.log("input/output invalid");
-        // }
+        try {
+            this.tD = JSON.parse(this.code[0])
+            this.iP = JSON.parse(this.code[1]).map(x=>x.reverse())
+            this.oP = JSON.parse(this.code[2]).map(x=>x.reverse())
+        } catch (e) {
+            console.log("input/output invalid")
+            return
+        }
+
+        [this.tC,this.tR,this.dC,this.dR] = this.tD
 
         // Pad each line to the next multiple of 3
-        let largestLineLength = Math.max(...this.code.slice(2).map(x=>x.length));
-        let lengthOfAllLines = largestLineLength + 3 - 1;
-        lengthOfAllLines -= (lengthOfAllLines % 3);
+        let lAL = Math.max(...this.code.slice(2).map(x=>x.length)) + 3 - 1
 
-        // Make 3x3 tiles
-        let rowChunks = this.code.slice(2).map(line => line.padEnd(lengthOfAllLines - line.length, ".").match(/.{1,3}/g));
+        // Make rows of chars
+        this.grid = this.code.slice(3).map(l => Array.from(l.padEnd(lAL - l.length, " ")))
 
-        for (let row = 0; row < rowChunks.length / 3; row += 1) {
-            for (let column = 0; column < rowChunks[row].length; column += 1) {
-                let gr=this.grid[[row, column]] = [0, 1, 2]
-                    .map(i => rowChunks[3 * row + i])
-                    .map(chunk => chunk ? chunk[column] : "...");
-                if(gr[1][1] === "T"){
-                    this.tRow = row;
-                    this.tCol = column;
-                }
-                for(let iR=0;iR<3;iR++) {
-                    for(let iC=0; iC<3;iC++){
-                        if(1+"><^v".indexOf(gr[iR][iC])){
-                            this.dRow = iR - 1;
-                            this.dCol = iC - 1;
-                        }
-                    }
-                }
-            }
-        }
-        if(!this.tRow)console.log("No train given")
-        if(!this.dRow)console.log("No train direction given")
-        
+        // old chunking code
+        // for (let row = 0; row < rowChunks.length / 3; row += 1) {
+        //     for (let column = 0; column < rowChunks[row].length; column += 1) {
+        //         let gr=this.grid[[row, column]] = [0, 1, 2]
+        //             .map(i => rowChunks[3 * row + i])
+        //             .map(chunk => chunk ? chunk[column] : "...")
+        //             .map(str => Array.from(str))
+        //         if(gr[1][1] === "T"){
+        //             this.tRow = row
+        //             this.tCol = column
+        //         }
+        //         for(let iR=0;iR<3;iR++) {
+        //             for(let iC=0; iC<3;iC++){
+        //                 if(1+"><^v".indexOf(gr[iR][iC])){
+        //                     this.dRow = iR - 1
+        //                     this.dCol = iC - 1
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        if(!this.tD)console.log("No train given")
+
         console.log(this.tRow,this.tCol)
         console.log(this.dRow,this.dCol)
-        console.log(this.grid);
+        console.log(this.grid)
     }
 
     /*
@@ -68,52 +70,32 @@ class Interpreter {
         - Normal(straight line or single turn)
         - Lazy Point(contains a '/' or '\\' at [1,1])
         - Sprung Point(contains one of '^v<>' at [1,1])
-        Lazy points have a numeric value(default 0) set by the programmer, I think
         Connections:
         Taken in NSEW format as [0,1,2,3]?
         or possibly, as an object.
     */
-    step() {
-        // remove train from old position
-        // let dGrid = this.grid
-        // let tStr = this.grid[[this.tRow,this.tCol]][1]
-        // dGrid[[this.tRow,this.tCol]][1] = tStr[0] + '#' + tStr[2]
+    step() { // Main stepping function
+        this.grid[this.tR][this.tC] = 'T'
+        if(this.tR == this.tD[1] && this.tC == this.tD[0])
+        this.tR += this.dR
+        this.tC += this.dC
+
+        let vn = [[0,1],[1,0],[0,-1],[-1,0]].filter(d=>d!=[-dR,-dC])
+        let ps = vn.filter(d=>'#' == this.grid[this.tR+d[0]][this.tC+d[1]])
 
 
-        this.tRow += this.dRow
-        this.tCol += this.dCol
-
-        let cell = this.grid[[this.tRow,this.tCol]] 
-        //find new delta
-        let tdR = this.dRow
-        let tdC = this.dCol
-        switch(cell[1][1]){
-        case '/':
-            this.dRow = tdC
-            this.dCol = tdR
-            this.grid[[this.tRow,this.tCol]][1].replace('/','\\')
-            break;
-        case '\\':
-            this.dRow = -tdC
-            this.dCol = -tdR
-            this.grid[[this.tRow,this.tCol]][1].replace('\\','/')
-            break;
-        case '^':
-
-
+        if(ps[0]) {
+            [this.dR,this.dC] = ps[0]
+        } else if('P' == this.grid[this.tR+this.dR][this.tC+this.dC]){
+            this.grid[this.tR+this.dR][this.tC+this.dC] = '#'
+            this.grid[this.tR+2*this.dR][this.tC+2*this.dC] = 'P'
+        } else {
+            return false // stop on a falsy value
         }
 
-        // add train in new position
-        // let ntStr = dGrid[[this.tRow,this.tCol]][1]
-        // dGrid[[this.tRow,this.tCol]][1] = tStr[0] + 'T' + tStr[2]
-
-        // for (let i = 0; i < this.grid.length; i++) { // rows
-        //     for (let j = 0; j < this.grid[0].length; j++) { // columns
-
-        //     }
-        console.log(this.grid);
-        }
+        console.log(this.grid)
+        return this.grid
     }
 }
 
-window.interp = new Interpreter();
+let interp = new Interpreter()
