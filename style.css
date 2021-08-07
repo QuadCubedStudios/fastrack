@@ -1,6 +1,5 @@
 :root {
-    --fastrack-grid-color: rgba(255, 255, 255, 0.4);
-    --fastrack-highlight-color: white;
+    --fastrack-tile-size: 16px;
 }
 
 * {
@@ -13,34 +12,24 @@ body {
 
     font-family: monospace;
     margin: 0;
-    padding: 1rem;
     max-width: 100%;
+    min-height: 100%;
+    overflow: hidden;
 }
 
-section {
-    height: 800px;
+.cursor {
+    position: absolute;
+    width: var(--fastrack-tile-size);
+    height: var(--fastrack-tile-size);
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
-textarea {
-    background-color: transparent;
-    border: 2px solid #3a608d;
-    border-radius: 8px;
-    width: 100%;
-    resize: vertical;
+.piece {
+    width: var(--fastrack-tile-size);
+    height: var(--fastrack-tile-size);
+    position: absolute;
+    /* background-color: red; */
 
-    color: white;
-    line-height: 1.0;
-
-    margin-bottom: 1rem;
-}
-
-button {
-    background-color: rgb(0, 150, 20);
-    border: none;
-    border-radius: 8px;;
-    width: 6rem;
-    padding: 0.5rem;
-    color: white;
-
-    cursor: pointer;
+    text-align: center;
+    font-size: var(--fastrack-tile-size);
 }

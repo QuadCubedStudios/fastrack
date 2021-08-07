@@ -1,77 +1,55 @@
 'use strict';
 
-import { Canvas } from "./util/canvas.js";
+class Editor {
+    constructor() {
+        this.currentPosition = [0, 0];
+        this.currentDelta = [1, 0];
+        this.code = {};
 
-import { Plugin } from "./editor/plugin.js";
-import { MouseControl } from "./editor/mouseControl.js";
-import { Vec } from "./util/vector.js";
+        this.cursor = document.querySelector(".cursor");
 
-export const TILE_SIZE = Vec(64, 64);
+        hotkeys("up", () => this.pointCursor([0, -1]));
+        hotkeys("down", () => this.pointCursor([0, 1]));
+        hotkeys("left", () => this.pointCursor([-1, 0]));
+        hotkeys("right", () => this.pointCursor([1, 0]));
 
-export class Editor {
-    constructor(/** @type {HTMLElement} */ element) {
-        let canvas = document.createElement("canvas");
-
-        element.appendChild(canvas);
-
-        this.canvas = new Canvas(canvas);
-        this.program = {
-            tiles: [
-                {
-                    position: Vec(0, 0),
-                    tile: "rail",
-                    rotation: 0,
-                }
-            ]
-        };
-        this.pendingDraw = null;
-        this.plugins = [
-            new MouseControl(this)
-        ];
-
-        let styles = window.getComputedStyle(element);
-        this.theme = {
-            gridColor: styles.getPropertyValue("--fastrack-grid-color"),
-            highlightColor: styles.getPropertyValue("--fastrack-highlight-color"),
-        };        
-
-        this.resize();
+        hotkeys("3", () => this.paintAtCursor("track"));
+        hotkeys("space", () => this.paintAtCursor(""));
     }
 
-    resize() {
-        this.canvas.resize();
-        this.redraw();
+    pointCursor(direction) {
+        this.currentDelta = direction;
     }
 
-    redraw() {
-        // Cancel any pending draw calls so we don't draw too many times
-        if (this.pendingDraw !== null) {
-            cancelAnimationFrame(this.pendingDraw);
+    paintAtCursor(type) {
+        let [x, y] = this.currentPosition;
+        let id = `piece-${x}-${y}`;
+        let tileSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fastrack-tile-size'), 10);
+
+        if (type !== "") {
+            let piece = document.querySelector(`#${id}`);
+            if (piece) {
+                piece.innerText = type;
+            } else {
+                piece = document.createElement("div");
+                piece.id = `${x}-${y}`;
+                piece.classList.add("piece");
+                piece.classList.add(type);
+                piece.style.top = `${y * tileSize}px`;
+                piece.style.left = `${x * tileSize}px`;    
+                piece.innerText = "#";
+    
+                document.querySelector("#pieces").appendChild(piece);
+            }
         }
-        // Draw on the next frame
-        this.pendingDraw = requestAnimationFrame(() => {
-            // Clear the canvas
-            this.canvas.clear();
 
-            // Draw the base grid
-            for (let x = 0; x < this.canvas.dimensions.x; x += TILE_SIZE.x) {
-                this.canvas.line(Vec(x, 0), Vec(x, this.canvas.dimensions.y), this.theme.gridColor, 2);
-            }
-
-            for (let y = 0; y < this.canvas.dimensions.y; y += TILE_SIZE.y) {
-                this.canvas.line(Vec(0, y), Vec(this.canvas.dimensions.x, y), this.theme.gridColor, 2);
-            }
-
-            for (const plugin of this.plugins) {
-                plugin.draw();
-            }
-
-            // Clear the pending draw
-            this.pendingDraw = null;
-        });
+        x += this.currentDelta[0];
+        y += this.currentDelta[1];
+        this.currentPosition = [Math.max(x, 0), Math.max(y, 0)];
+        this.cursor.style.top = `${y * tileSize}px`;
+        this.cursor.style.left = `${x * tileSize}px`;
+        this.cursor.scrollIntoView();
     }
 }
 
-
-let editor = new Editor(document.querySelector("#editor"));
-window.addEventListener("resize", () => editor.resize());
+window.editor = new Editor();

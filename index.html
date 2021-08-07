@@ -8,18 +8,9 @@
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <header>
-        <h1>FasTrack</h1>
-        <p>A Turing Complete Train language</p>
-    </header>
-    <textarea id="source" rows="20">// Enter code here</textarea>
-    <!-- Temporary handler -->
-    <button onclick="interp.parse(document.querySelector('textarea').value)">Call Parser(Click this first)</button>
-    <button onclick="interp.step()">Step Once</button>
-    <script src="js/interp.js"></script>
-
-    <!-- For later -->
-    <!-- <section id="editor"></section> -->
-    <!-- <script type="module" src="js/index.js"></script> -->
+    <div id="pieces"></div>
+    <div class="cursor"></div>
+    <script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>
