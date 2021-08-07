@@ -46,21 +46,23 @@ Can be one of the following(requires padding):
  # 
 ```
 
+Turns can be sharper, but it is recommended to keep all tracks 3x3 in order for readability.
+
 ## Lazy Points
 
 The storage mechanism.
 
-Requires a 1/0 starter value from Prelude. Possible TODO: May be moved to the tile itself.
+Requires a 1/0 starter value from Prelude.
 
 Tile style:
 ```
  
-#X#
+P##
  #
 ```
 In any rotated form.
 
-where `X` can be either `\` or `/`.
+where `P` stands for pushable. It is allowed to put it on either side. instead of being a switch, the train must push it till an intersection is reached, a slight complication over the original idea.
 
 # Sprung points
 
