@@ -12,6 +12,7 @@ class Interpreter {
         this.code = []
         this.grid = []
 
+        this.sLoc = false
         this.input = input // must be an array of bits
     }
 
@@ -82,21 +83,24 @@ class Interpreter {
         or possibly, as an object.
     */
     step(display) { // Main stepping function
-
-        display.innerText = this.grid.map(x=>x.join('')).join`
+        const g = JSON.parse(JSON.stringify(this.grid))
+        g[this.tR][this.tC] = 'T';
+        display.innerText = g.map(x=>x.join``).join`
 `
 
-        this.grid[this.tR][this.tC] = '#'
         this.tR += this.dR
         this.tC += this.dC
-        this.grid[this.tR][this.tC] = 'T'
         console.log(this.tR,this.tC,this.dR,this.dC)
 
         let vn = [[0,1],[1,0],[0,-1],[-1,0]].filter(d=>d!=[-this.dR,-this.dC].toString())
         let ps = vn.filter(d=>'#' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
+        let ss = vn.filter(d=>'S' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
 
+        if(ss[0] && ss[0] != [-this.dR,-this.dC]){
+            console.log([this.dR, this.dC]);
 
-        if(ps) {
+            [this.dR,this.dC] = ss[0]
+        } else if(ps) {
             [this.dR,this.dC] = ps[0]
         } else if('P' == this.grid[this.tR+this.dR][this.tC+this.dC]){
             this.grid[this.tR+this.dR][this.tC+this.dC] = '#'

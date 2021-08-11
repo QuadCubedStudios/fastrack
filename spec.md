@@ -71,12 +71,12 @@ The method of constructing subroutines.
 Tile Style:
 ```
 
-#Y#
+##S
  # 
 ```
 In any rotated form.
 
-Where `Y` can be in `^v<>`.
+Where `S` can be on any direction in the T.
 
 # Program end
 
