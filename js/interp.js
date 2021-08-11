@@ -95,14 +95,17 @@ class Interpreter {
         let vn = [[0,1],[1,0],[0,-1],[-1,0]].filter(d=>d!=[-this.dR,-this.dC].toString())
         let ps = vn.filter(d=>'#' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
         let ss = vn.filter(d=>'S' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
+        let sw = vn.filter(d=>'P' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
 
         if(ss[0] && ss[0] != [-this.dR,-this.dC]){
             console.log([this.dR, this.dC]);
 
             [this.dR,this.dC] = ss[0]
-        } else if(ps) {
+        } else if(ps[0]) {
             [this.dR,this.dC] = ps[0]
-        } else if('P' == this.grid[this.tR+this.dR][this.tC+this.dC]){
+        } else if(sw[0]){
+
+            [this.dR,this.dC] = sw[0]
             this.grid[this.tR+this.dR][this.tC+this.dC] = '#'
             this.grid[this.tR+2*this.dR][this.tC+2*this.dC] = 'P'
         } else {
