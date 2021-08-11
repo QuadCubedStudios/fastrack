@@ -6,15 +6,15 @@ class Editor {
         this.currentDelta = [1, 0];
         this.code = {};
 
-        this.cursor = document.querySelector(".cursor");
+        // this.cursor = document.querySelector(".cursor");
 
-        hotkeys("up", () => this.pointCursor([0, -1]));
-        hotkeys("down", () => this.pointCursor([0, 1]));
-        hotkeys("left", () => this.pointCursor([-1, 0]));
-        hotkeys("right", () => this.pointCursor([1, 0]));
+        // hotkeys("up", () => this.pointCursor([0, -1]));
+        // hotkeys("down", () => this.pointCursor([0, 1]));
+        // hotkeys("left", () => this.pointCursor([-1, 0]));
+        // hotkeys("right", () => this.pointCursor([1, 0]));
 
-        hotkeys("3", () => this.paintAtCursor("track"));
-        hotkeys("space", () => this.paintAtCursor(""));
+        // hotkeys("3", () => this.paintAtCursor("track"));
+        // hotkeys("space", () => this.paintAtCursor(""));
     }
 
     pointCursor(direction) {

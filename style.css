@@ -1,5 +1,42 @@
+/* :root { */
+/*     --fastrack-tile-size: 16px; */
+/* } */
+
+/* * { */
+/*     box-sizing: border-box; */
+/* } */
+
+/* body { */
+/*     background-color: #202b38; */
+/*     color: white; */
+
+/*     font-family: monospace; */
+/*     margin: 0; */
+/*     max-width: 100%; */
+/*     min-height: 100%; */
+/*     overflow: hidden; */
+/* } */
+
+/* .cursor { */
+/*     position: absolute; */
+/*     width: var(--fastrack-tile-size); */
+/*     height: var(--fastrack-tile-size); */
+/*     background-color: rgba(255, 255, 255, 0.7); */
+/* } */
+
+/* .piece { */
+/*     width: var(--fastrack-tile-size); */
+/*     height: var(--fastrack-tile-size); */
+/*     position: absolute; */
+/*     /\* background-color: red; *\/ */
+
+/*     text-align: center; */
+/*     font-size: var(--fastrack-tile-size); */
+/* } */
+
 :root {
-    --fastrack-tile-size: 16px;
+    --fastrack-grid-color: rgba(255, 255, 255, 0.4);
+    --fastrack-highlight-color: white;
 }
 
 * {
@@ -12,24 +49,34 @@ body {
 
     font-family: monospace;
     margin: 0;
+    padding: 1rem;
     max-width: 100%;
-    min-height: 100%;
-    overflow: hidden;
 }
 
-.cursor {
-    position: absolute;
-    width: var(--fastrack-tile-size);
-    height: var(--fastrack-tile-size);
-    background-color: rgba(255, 255, 255, 0.7);
+section {
+    height: 800px;
 }
 
-.piece {
-    width: var(--fastrack-tile-size);
-    height: var(--fastrack-tile-size);
-    position: absolute;
-    /* background-color: red; */
+textarea {
+    background-color: transparent;
+    border: 2px solid #3a608d;
+    border-radius: 8px;
+    width: 100%;
+    resize: vertical;
 
-    text-align: center;
-    font-size: var(--fastrack-tile-size);
+    color: white;
+    line-height: 1.0;
+
+    margin-bottom: 1rem;
+}
+
+button {
+    background-color: rgb(0, 150, 20);
+    border: none;
+    border-radius: 8px;;
+    width: 6rem;
+    padding: 0.5rem;
+    color: white;
+
+    cursor: pointer;
 }

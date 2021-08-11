@@ -1,10 +1,17 @@
 // Fastrack interpreter
 // No multi-track drifting allowed
 
+//helper fn
+function sleep(ms) {
+  return ;
+}
+
 class Interpreter {
+
     constructor(code, input) {
         this.code = []
         this.grid = []
+
         this.input = input // must be an array of bits
     }
 
@@ -74,27 +81,39 @@ class Interpreter {
         Taken in NSEW format as [0,1,2,3]?
         or possibly, as an object.
     */
-    step() { // Main stepping function
-        this.grid[this.tR][this.tC] = 'T'
-        if(this.tR == this.tD[1] && this.tC == this.tD[0])
+    step(display) { // Main stepping function
+
+        display.innerText = this.grid.map(x=>x.join('')).join`
+`
+
+        this.grid[this.tR][this.tC] = '#'
         this.tR += this.dR
         this.tC += this.dC
+        this.grid[this.tR][this.tC] = 'T'
+        console.log(this.tR,this.tC,this.dR,this.dC)
 
-        let vn = [[0,1],[1,0],[0,-1],[-1,0]].filter(d=>d!=[-dR,-dC])
-        let ps = vn.filter(d=>'#' == this.grid[this.tR+d[0]][this.tC+d[1]])
+        let vn = [[0,1],[1,0],[0,-1],[-1,0]].filter(d=>d!=[-this.dR,-this.dC].toString())
+        let ps = vn.filter(d=>'#' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
 
 
-        if(ps[0]) {
+        if(ps) {
             [this.dR,this.dC] = ps[0]
         } else if('P' == this.grid[this.tR+this.dR][this.tC+this.dC]){
             this.grid[this.tR+this.dR][this.tC+this.dC] = '#'
             this.grid[this.tR+2*this.dR][this.tC+2*this.dC] = 'P'
         } else {
-            return false // stop on a falsy value
+            return 0 // stop on a falsy value
         }
 
         console.log(this.grid)
+        if(this.tR == this.tD[1] && this.tC == this.tD[0]){
+            return 0 // end at original position
+        }
         return this.grid
+    }
+
+    async run(display) {
+        while(this.step(display))await new Promise(resolve => setTimeout(resolve, 500))
     }
 }
 
