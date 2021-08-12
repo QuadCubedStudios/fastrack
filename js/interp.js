@@ -1,19 +1,11 @@
 // Fastrack interpreter
 // No multi-track drifting allowed
 
-//helper fn
-function sleep(ms) {
-  return ;
-}
-
 class Interpreter {
-
-    constructor(code, input) {
+    constructor() {
         this.code = []
         this.grid = []
-
-        this.sLoc = false
-        this.input = input // must be an array of bits
+        this.input = [] // must be an array of bits
     }
 
     parse(value) {
@@ -26,8 +18,9 @@ class Interpreter {
         // may add a flag later to accomodate string input converted to a byte stream.
         try {
             this.tD = JSON.parse(this.code[0])
-            this.iP = JSON.parse(this.code[1]).map(x=>x.reverse())
-            this.oP = JSON.parse(this.code[2]).map(x=>x.reverse())
+            this.iP = JSON.parse(this.code[1]).map(x=>x.reverse()) // input points
+            this.pP = JSON.parse(this.code[2]).map(x=>[x[1],x[0],x[2]]) // preset points
+            this.oP = JSON.parse(this.code[3]).map(x=>x.reverse()) // output points
         } catch (e) {
             console.log("input/output invalid")
             return
@@ -35,33 +28,11 @@ class Interpreter {
 
         [this.tC,this.tR,this.dC,this.dR] = this.tD
 
-        // Pad each line to the next multiple of 3
-        let lAL = Math.max(...this.code.slice(2).map(x=>x.length)) + 3 - 1
+        // Pad each line to hte longest length
+        let lAL = Math.max(...this.code.slice(2).map(x=>x.length))
 
         // Make rows of chars
         this.grid = this.code.slice(3).map(l => Array.from(l.padEnd(lAL - l.length, " ")))
-
-        // old chunking code
-        // for (let row = 0; row < rowChunks.length / 3; row += 1) {
-        //     for (let column = 0; column < rowChunks[row].length; column += 1) {
-        //         let gr=this.grid[[row, column]] = [0, 1, 2]
-        //             .map(i => rowChunks[3 * row + i])
-        //             .map(chunk => chunk ? chunk[column] : "...")
-        //             .map(str => Array.from(str))
-        //         if(gr[1][1] === "T"){
-        //             this.tRow = row
-        //             this.tCol = column
-        //         }
-        //         for(let iR=0;iR<3;iR++) {
-        //             for(let iC=0; iC<3;iC++){
-        //                 if(1+"><^v".indexOf(gr[iR][iC])){
-        //                     this.dRow = iR - 1
-        //                     this.dCol = iC - 1
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
         if(!this.tD)console.log("No train given")
 
         console.log(this.tRow,this.tCol)
@@ -70,17 +41,9 @@ class Interpreter {
     }
 
     /*
-        Track object specification:
+        Track specification:
         Track symbol: '#'
         Train symbol: 'T'
-        Train direction: indicated by any of ^v<> on a space where a track would be.
-        Type:
-        - Normal(straight line or single turn)
-        - Lazy Point(contains a '/' or '\\' at [1,1])
-        - Sprung Point(contains one of '^v<>' at [1,1])
-        Connections:
-        Taken in NSEW format as [0,1,2,3]?
-        or possibly, as an object.
     */
     step(display) { // Main stepping function
         const g = JSON.parse(JSON.stringify(this.grid))
@@ -98,13 +61,10 @@ class Interpreter {
         let sw = vn.filter(d=>'P' == (this.grid[this.tR+d[0]]||[])[this.tC+d[1]])
 
         if(ss[0] && ss[0] != [-this.dR,-this.dC]){
-            console.log([this.dR, this.dC]);
-
             [this.dR,this.dC] = ss[0]
         } else if(ps[0]) {
             [this.dR,this.dC] = ps[0]
         } else if(sw[0]){
-
             [this.dR,this.dC] = sw[0]
             this.grid[this.tR+this.dR][this.tC+this.dC] = '#'
             this.grid[this.tR+2*this.dR][this.tC+2*this.dC] = 'P'
@@ -119,9 +79,22 @@ class Interpreter {
         return this.grid
     }
 
-    async run(display) {
-        while(this.step(display))await new Promise(resolve => setTimeout(resolve, 500))
-    }
+    async run(display, output) {
+        while(this.step(display))await new Promise(resolve => setTimeout(resolve, 500)) // JS's awful hack of a delaying method.
+
+        let aPs = {} // all point data
+        for(let i=0; i<this.iP.length; i++) {
+            let [r,c] = this.iP[i]
+            let b = this.input[i]
+            aPs[this.iP[i]] = this.grid[r][c] == 'P' ? b : !b
+        }
+
+        for(let i=0; i<this.pP.length; i++) {
+            let [r,c,b] = this.pP[i]
+            aPs[this.pP[i].slice(0,2)] = this.grid[r][c] == 'P' ? b : !b
+        }
+
+        output.innerText = this.oP.map(x => +aPs[x]).join``
 }
 
 let interp = new Interpreter()
