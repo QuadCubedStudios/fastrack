@@ -84,9 +84,9 @@ class Interpreter {
     */
     step(display) { // Main stepping function
         const g = JSON.parse(JSON.stringify(this.grid))
-        g[this.tR][this.tC] = 'T';
-        display.innerText = g.map(x=>x.join``).join`
-`
+        g[this.tR][this.tC] = '<span style="color:red">T</span>';
+        display.innerHTML = g.map(x=>x.join``).join`
+`.replace(/([PS])/g,'<span class="$1color">$1</span>')
 
         this.tR += this.dR
         this.tC += this.dC

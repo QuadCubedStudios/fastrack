@@ -8,11 +8,23 @@
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+    <h1>Code</h1>
     <textarea id="source" rows="20">// Enter code here</textarea>
     <!-- Temporary handler -->
     <button onclick="interp.parse(document.querySelector('textarea').value)">Call Parser(Click this first)</button>
     <button onclick="interp.step(document.getElementById('display'))">Step Once</button>
     <button onclick="interp.run(document.getElementById('display'))">Run Program</button>
+
+    <h1>Input</h1>
+    <textarea id="inp" rows="1" id="" name="">
+    </textarea>
+
+    <h1>Output</h1>
+    <pre id="out">
+
+    </pre>
+
+    <h1>Debug</h1>
     <pre id="display">
     Code will be shown here.
     </pre>
