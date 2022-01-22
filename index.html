@@ -9,9 +9,13 @@
 </head>
 <body>
     <h1>Code</h1>
+    <label>
+        Train Data
+        <input id="train-data" type="text"/>
+    </label>
     <textarea id="source" rows="20">// Enter code here</textarea>
     <!-- Temporary handler -->
-    <button onclick="interp.parse(document.querySelector('textarea').value)">Call Parser(Click this first)</button>
+    <button onclick="interp.parse(document.querySelector('textarea').value, document.querySelector('#train-data').value)">Call Parser(Click this first)</button>
     <button onclick="interp.step(document.getElementById('display'))">Step Once</button>
     <button onclick="interp.run(document.getElementById('display'),document.getElementById('out'))">Run Program</button>
 
